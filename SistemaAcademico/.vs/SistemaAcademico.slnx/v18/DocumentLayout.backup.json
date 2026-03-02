@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\gabsu\\OneDrive\\Documentos\\LFP_B_1S2026\\SistemaAcademico\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{3B1C8E41-5611-451A-8BB4-B5D24C37C113}|SistemaAcademico.vcxproj|C:\\Users\\gabsu\\OneDrive\\Documentos\\LFP_B_1S2026\\SistemaAcademico\\SistemaAcademico.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{3B1C8E41-5611-451A-8BB4-B5D24C37C113}|SistemaAcademico.vcxproj|solutionrelative:SistemaAcademico.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "SistemaAcademico.cpp",
+              "DocumentMoniker": "C:\\Users\\gabsu\\OneDrive\\Documentos\\LFP_B_1S2026\\SistemaAcademico\\SistemaAcademico.cpp",
+              "RelativeDocumentMoniker": "SistemaAcademico.cpp",
+              "ToolTip": "C:\\Users\\gabsu\\OneDrive\\Documentos\\LFP_B_1S2026\\SistemaAcademico\\SistemaAcademico.cpp",
+              "RelativeToolTip": "SistemaAcademico.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAPkAAABWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-03-02T04:17:15.265Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
