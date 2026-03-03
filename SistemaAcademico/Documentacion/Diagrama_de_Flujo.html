@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagrama de Flujo – Sistema de Análisis Académico</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;700;800&display=swap');
+
+  :root {
+    --bg: #0d1117;
+    --panel: #161b22;
+    --border: #21262d;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --red: #f85149;
+    --yellow: #d29922;
+    --purple: #bc8cff;
+    --orange: #ffa657;
+    --text: #e6edf3;
+    --muted: #8b949e;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Syne', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  header {
+    padding: 24px 40px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--panel);
+  }
+
+  .logo {
+    width: 40px; height: 40px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+
+  header h1 { font-size: 18px; font-weight: 800; }
+  header p { font-size: 12px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+
+  .controls {
+    display: flex; gap: 10px; margin-left: auto; flex-wrap: wrap;
+  }
+
+  .btn {
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn.active { border-color: var(--accent); color: var(--accent); background: rgba(88,166,255,0.1); }
+
+  .layout {
+    display: flex;
+    height: calc(100vh - 89px);
+  }
+
+  .sidebar {
+    width: 240px;
+    border-right: 1px solid var(--border);
+    background: var(--panel);
+    overflow-y: auto;
+    padding: 16px;
+    flex-shrink: 0;
+  }
+
+  .sidebar h3 {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    margin-bottom: 12px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .legend-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 6px 8px;
+    border-radius: 6px;
+    margin-bottom: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-size: 13px;
+  }
+  .legend-item:hover { background: rgba(255,255,255,0.04); }
+  .legend-item.highlighted { background: rgba(88,166,255,0.08); }
+
+  .legend-dot {
+    width: 12px; height: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .sidebar .section-title {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 20px; margin-bottom: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .canvas-wrap {
+    flex: 1;
+    overflow: auto;
+    position: relative;
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle, #21262d 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  svg {
+    display: block;
+    transition: transform 0.3s;
+  }
+
+  /* Node styles */
+  .node { cursor: pointer; }
+  .node rect, .node ellipse, .node polygon, .node path {
+    transition: filter 0.2s, opacity 0.2s;
+  }
+  .node:hover rect, .node:hover ellipse, .node:hover polygon {
+    filter: brightness(1.3);
+  }
+  .node.dimmed rect, .node.dimmed ellipse, .node.dimmed polygon {
+    opacity: 0.2;
+  }
+  .node.highlighted rect, .node.highlighted ellipse, .node.highlighted polygon {
+    filter: brightness(1.4) drop-shadow(0 0 8px currentColor);
+  }
+
+  /* Tooltip */
+  .tooltip {
+    position: fixed;
+    background: var(--panel);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 13px;
+    max-width: 280px;
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 0.15s;
+    line-height: 1.6;
+  }
+  .tooltip.visible { opacity: 1; }
+  .tooltip strong { color: var(--accent); display: block; margin-bottom: 4px; font-size: 14px; }
+  .tooltip code { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--green); }
+
+  .zoom-controls {
+    position: absolute;
+    bottom: 20px; right: 20px;
+    display: flex; gap: 6px;
+  }
+  .zoom-btn {
+    width: 36px; height: 36px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 18px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .zoom-btn:hover { border-color: var(--accent); color: var(--accent); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">⚙️</div>
+  <div>
+    <h1>Sistema de Análisis Académico</h1>
+    <p>Diagrama de Flujo Interactivo  //  C++ v1.0</p>
+  </div>
+  <div class="controls">
+    <button class="btn active" id="btn-all" onclick="showAll()">Todo el flujo</button>
+    <button class="btn" id="btn-carga" onclick="highlight('carga')">Carga de datos</button>
+    <button class="btn" id="btn-reportes" onclick="highlight('reportes')">Reportes</button>
+    <button class="btn" id="btn-utils" onclick="highlight('utils')">Utilidades</button>
+  </div>
+</header>
+
+<div class="layout">
+  <div class="sidebar">
+    <h3>Leyenda</h3>
+    <div class="legend-item" onclick="highlight('inicio')">
+      <div class="legend-dot" style="background:#58a6ff; border-radius:50%;"></div>
+      Inicio / Fin
+    </div>
+    <div class="legend-item" onclick="highlight('proceso')">
+      <div class="legend-dot" style="background:#3fb950;"></div>
+      Proceso
+    </div>
+    <div class="legend-item" onclick="highlight('decision')">
+      <div class="legend-dot" style="background:#d29922; transform:rotate(45deg);"></div>
+      Decisión
+    </div>
+    <div class="legend-item" onclick="highlight('io')">
+      <div class="legend-dot" style="background:#bc8cff; border-radius:2px; transform:skewX(-10deg);"></div>
+      Entrada / Salida
+    </div>
+    <div class="legend-item" onclick="highlight('reporte')">
+      <div class="legend-dot" style="background:#ffa657;"></div>
+      Reporte HTML
+    </div>
+
+    <div class="section-title">Secciones</div>
+    <div class="legend-item" onclick="highlight('carga')" id="leg-carga">
+      <div class="legend-dot" style="background:#58a6ff;"></div>
+      Carga de archivos
+    </div>
+    <div class="legend-item" onclick="highlight('reportes')" id="leg-reportes">
+      <div class="legend-dot" style="background:#ffa657;"></div>
+      Generación de reportes
+    </div>
+    <div class="legend-item" onclick="highlight('utils')" id="leg-utils">
+      <div class="legend-dot" style="background:#3fb950;"></div>
+      Funciones utilitarias
+    </div>
+
+    <div class="section-title" style="margin-top:24px;">Haz clic en</div>
+    <p style="font-size:11px; color:var(--muted); line-height:1.6;">cualquier nodo del diagrama para ver detalles de esa función.</p>
+  </div>
+
+  <div class="canvas-wrap" id="canvas">
+    <svg id="diagram" width="1100" height="2100" viewBox="0 0 1100 2100">
+      <defs>
+        <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#444c56"/>
+        </marker>
+        <marker id="arrow-accent" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#58a6ff"/>
+        </marker>
+        <marker id="arrow-green" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#3fb950"/>
+        </marker>
+        <marker id="arrow-red" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#f85149"/>
+        </marker>
+      </defs>
+
+      <!-- ====== FONDO SECCION CARGA ====== -->
+      <rect x="30" y="280" width="460" height="420" rx="12" fill="rgba(88,166,255,0.04)" stroke="rgba(88,166,255,0.15)" stroke-width="1" stroke-dasharray="6,4"/>
+      <text x="50" y="272" fill="rgba(88,166,255,0.5)" font-family="JetBrains Mono" font-size="11">// CARGA DE DATOS</text>
+
+      <!-- ====== FONDO SECCION REPORTES ====== -->
+      <rect x="550" y="280" width="510" height="840" rx="12" fill="rgba(255,166,87,0.04)" stroke="rgba(255,166,87,0.15)" stroke-width="1" stroke-dasharray="6,4"/>
+      <text x="570" y="272" fill="rgba(255,166,87,0.5)" font-family="JetBrains Mono" font-size="11">// GENERACIÓN DE REPORTES</text>
+
+      <!-- ====== FONDO SECCION UTILS ====== -->
+      <rect x="30" y="780" width="460" height="340" rx="12" fill="rgba(63,185,80,0.04)" stroke="rgba(63,185,80,0.15)" stroke-width="1" stroke-dasharray="6,4"/>
+      <text x="50" y="772" fill="rgba(63,185,80,0.5)" font-family="JetBrains Mono" font-size="11">// FUNCIONES UTILITARIAS</text>
+
+      <!-- CONNECTIONS (behind nodes) -->
+      <!-- Main flow -->
+      <line x1="550" y1="80" x2="550" y2="120" stroke="#444c56" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line x1="550" y1="170" x2="550" y2="210" stroke="#444c56" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line x1="550" y1="260" x2="550" y2="310" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#arrow-accent)"/>
+
+      <!-- Menu to carga branch -->
+      <path d="M480,335 L260,335" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#arrow-accent)" fill="none"/>
+      <text x="340" y="328" fill="#58a6ff" font-size="11" font-family="JetBrains Mono">1-3</text>
+
+      <!-- Menu to reportes branch -->
+      <path d="M620,335 L750,335" stroke="#ffa657" stroke-width="1.5" marker-end="url(#arrow)" fill="none"/>
+      <text x="656" y="328" fill="#ffa657" font-size="11" font-family="JetBrains Mono">4-8</text>
+
+      <!-- Menu to exit -->
+      <path d="M550,360 L550,1960" stroke="#f85149" stroke-width="1.5" stroke-dasharray="4,4" marker-end="url(#arrow-red)" fill="none"/>
+      <text x="558" y="420" fill="#f85149" font-size="11" font-family="JetBrains Mono">9</text>
+
+      <!-- Carga sub-decisions -->
+      <line x1="260" y1="370" x2="260" y2="410" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#arrow-accent)"/>
+      <line x1="260" y1="460" x2="260" y2="480" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+      <line x1="260" y1="460" x2="100" y2="460" stroke="#f85149" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrow-red)" fill="none"/>
+      <text x="105" y="453" fill="#f85149" font-size="10" font-family="JetBrains Mono">Error</text>
+      <line x1="260" y1="530" x2="260" y2="560" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+      <line x1="260" y1="610" x2="260" y2="640" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+
+      <!-- Back to menu from carga -->
+      <path d="M380,670 Q480,670 550,660 Q620,650 620,360" stroke="#444c56" stroke-width="1" stroke-dasharray="3,3" fill="none"/>
+
+      <!-- Utils connections from carga -->
+      <line x1="260" y1="700" x2="260" y2="800" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+      <line x1="260" y1="850" x2="260" y2="880" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+      <line x1="260" y1="930" x2="260" y2="960" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+      <line x1="260" y1="1010" x2="260" y2="1060" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+
+      <!-- Reportes connections -->
+      <line x1="750" y1="370" x2="750" y2="410" stroke="#ffa657" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line x1="750" y1="460" x2="750" y2="490" stroke="#ffa657" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line x1="750" y1="540" x2="750" y2="570" stroke="#ffa657" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line x1="750" y1="620" x2="750" y2="650" stroke="#ffa657" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line x1="750" y1="700" x2="750" y2="730" stroke="#ffa657" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line x1="750" y1="780" x2="750" y2="820" stroke="#ffa657" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line x1="750" y1="870" x2="750" y2="900" stroke="#ffa657" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line x1="750" y1="950" x2="750" y2="990" stroke="#ffa657" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+      <!-- Back to menu from reportes -->
+      <path d="M880,1060 Q980,1060 980,660 Q980,350 760,340" stroke="#444c56" stroke-width="1" stroke-dasharray="3,3" fill="none"/>
+
+      <!-- ====== NODES ====== -->
+
+      <!-- START -->
+      <g class="node" id="n-start" data-group="inicio" data-tip="<strong>INICIO</strong>Punto de entrada del programa. Se ejecuta main() y comienza el bucle principal del sistema.">
+        <ellipse cx="550" cy="55" rx="90" ry="28" fill="#1f6feb" stroke="#388bfd" stroke-width="2"/>
+        <text x="550" y="61" text-anchor="middle" fill="white" font-family="Syne" font-weight="700" font-size="14">INICIO</text>
+      </g>
+
+      <!-- INPUT compilar -->
+      <g class="node" id="n-compile" data-group="io" data-tip="<strong>Compilar y ejecutar</strong><code>g++ -o sistema main.cpp -std=c++17</code>El usuario compila y ejecuta el binario generado.">
+        <polygon points="430,120 670,120 650,170 410,170" fill="#1b2a40" stroke="#bc8cff" stroke-width="1.5"/>
+        <text x="550" y="151" text-anchor="middle" fill="#bc8cff" font-family="JetBrains Mono" font-size="12">Compilar &amp; Ejecutar</text>
+      </g>
+
+      <!-- mostrarMenu() -->
+      <g class="node" id="n-menu-fn" data-group="proceso" data-tip="<strong>mostrarMenu()</strong>Imprime en consola las 9 opciones disponibles del sistema y solicita una opción al usuario.">
+        <rect x="420" y="210" width="260" height="50" rx="8" fill="#0f3a1f" stroke="#3fb950" stroke-width="1.5"/>
+        <text x="550" y="241" text-anchor="middle" fill="#3fb950" font-family="JetBrains Mono" font-size="12">mostrarMenu()</text>
+      </g>
+
+      <!-- Decision opcion -->
+      <g class="node" id="n-decision" data-group="decision" data-tip="<strong>switch(opcion)</strong>Evalúa la opción ingresada (1-9) y redirige al caso correspondiente. Opciones 1-3: carga de datos. Opciones 4-8: reportes. Opción 9: salir.">
+        <polygon points="550,310 680,335 550,360 420,335" fill="#2d2a00" stroke="#d29922" stroke-width="2"/>
+        <text x="550" y="340" text-anchor="middle" fill="#d29922" font-family="JetBrains Mono" font-size="12">switch(opcion)</text>
+      </g>
+
+      <!-- ---- CARGA BRANCH ---- -->
+      <!-- Decision tipo de carga -->
+      <g class="node" id="n-carga-dec" data-group="decision" data-tip="<strong>¿Qué tipo de datos cargar?</strong>Según la opción (1, 2 o 3), se invoca la función de carga correspondiente.">
+        <polygon points="260,410 370,435 260,460 150,435" fill="#2d2a00" stroke="#d29922" stroke-width="1.5"/>
+        <text x="260" y="440" text-anchor="middle" fill="#d29922" font-family="JetBrains Mono" font-size="11">Tipo de carga?</text>
+      </g>
+
+      <!-- Open file decision -->
+      <g class="node" id="n-file-open" data-group="decision" data-tip="<strong>¿Archivo abre correctamente?</strong>ifstream verifica si el archivo existe y tiene permisos de lectura. Si falla, muestra error y retorna.">
+        <polygon points="260,480 380,505 260,530 140,505" fill="#2d2a00" stroke="#d29922" stroke-width="1.5"/>
+        <text x="260" y="510" text-anchor="middle" fill="#d29922" font-family="JetBrains Mono" font-size="11">¿Abre archivo?</text>
+      </g>
+
+      <!-- Leer líneas -->
+      <g class="node" id="n-readline" data-group="proceso" data-tip="<strong>Leer líneas CSV</strong>getline() lee cada línea del archivo. Líneas vacías se saltan. Se usa split() para tokenizar por coma (,).">
+        <rect x="160" y="560" width="200" height="50" rx="8" fill="#0f1f0f" stroke="#3fb950" stroke-width="1.5"/>
+        <text x="260" y="591" text-anchor="middle" fill="#3fb950" font-family="JetBrains Mono" font-size="11">Leer líneas CSV</text>
+      </g>
+
+      <!-- Validar campos -->
+      <g class="node" id="n-validate" data-group="proceso" data-tip="<strong>Validar campos</strong>Verifica que cada línea tenga al menos 5 campos después del split(). Líneas con menos campos son ignoradas silenciosamente.">
+        <rect x="160" y="640" width="200" height="50" rx="8" fill="#0f1f0f" stroke="#3fb950" stroke-width="1.5"/>
+        <text x="260" y="671" text-anchor="middle" fill="#3fb950" font-family="JetBrains Mono" font-size="11">Validar campos (&gt;=5)</text>
+      </g>
+
+      <!-- Vector push_back -->
+      <g class="node" id="n-push" data-group="io" data-tip="<strong>Agregar a vector global</strong>Se construye el struct (Estudiante/Curso/Nota) con los campos parseados y se hace push_back() al vector global correspondiente.">
+        <polygon points="160,700 360,700 340,750 180,750" fill="#1a1433" stroke="#bc8cff" stroke-width="1.5"/>
+        <text x="260" y="731" text-anchor="middle" fill="#bc8cff" font-family="JetBrains Mono" font-size="11">push_back() al vector</text>
+      </g>
+
+      <!-- ---- UTILS SECTION ---- -->
+      <!-- split() -->
+      <g class="node" id="n-split" data-group="utils" data-tip="<strong>split(string, ',')</strong>Tokeniza la línea CSV usando stringstream y getline(). Limpia espacios en blanco con find_first_not_of / find_last_not_of.<code>Complejidad: O(n)</code>">
+        <rect x="160" y="800" width="200" height="50" rx="8" fill="#0a2210" stroke="#3fb950" stroke-width="1.5"/>
+        <text x="260" y="831" text-anchor="middle" fill="#3fb950" font-family="JetBrains Mono" font-size="11">split(line, ',')</text>
+      </g>
+
+      <!-- stoi / stod -->
+      <g class="node" id="n-convert" data-group="utils" data-tip="<strong>Conversión de tipos</strong>stoi() convierte strings a int. stod() convierte strings a double. Sin manejo de excepciones — un valor no numérico lanza std::invalid_argument.">
+        <rect x="160" y="880" width="200" height="50" rx="8" fill="#0a2210" stroke="#3fb950" stroke-width="1.5"/>
+        <text x="260" y="911" text-anchor="middle" fill="#3fb950" font-family="JetBrains Mono" font-size="11">stoi() / stod()</text>
+      </g>
+
+      <!-- buscarEstudiante / buscarCurso -->
+      <g class="node" id="n-search" data-group="utils" data-tip="<strong>buscarEstudiante() / buscarCurso()</strong>Búsqueda lineal O(n) sobre el vector. Retorna puntero al elemento o nullptr si no encuentra. Usadas en reportes para resolución de claves foráneas.">
+        <rect x="160" y="960" width="200" height="50" rx="8" fill="#0a2210" stroke="#3fb950" stroke-width="1.5"/>
+        <text x="260" y="991" text-anchor="middle" fill="#3fb950" font-family="JetBrains Mono" font-size="11">buscarEstudiante/Curso()</text>
+      </g>
+
+      <!-- Estadísticas -->
+      <g class="node" id="n-stats" data-group="utils" data-tip="<strong>calcularMediana() + calcularDesviacionEstandar()</strong>Mediana: ordena el vector (modifica el original) y retorna el valor central.<br>Desviación: usa fórmula poblacional (÷N). Ambas retornan 0 para vectores vacíos.">
+        <rect x="160" y="1060" width="200" height="50" rx="8" fill="#0a2210" stroke="#3fb950" stroke-width="1.5"/>
+        <text x="260" y="1091" text-anchor="middle" fill="#3fb950" font-family="JetBrains Mono" font-size="11">calcularMediana/DesvEst()</text>
+      </g>
+
+      <!-- ---- REPORTES BRANCH ---- -->
+      <!-- Decision reporte tipo -->
+      <g class="node" id="n-rep-dec" data-group="decision" data-tip="<strong>¿Qué reporte generar?</strong>Opciones 4 a 8, cada una corresponde a un reporte HTML diferente con distintos datos de entrada.">
+        <polygon points="750,410 880,435 750,460 620,435" fill="#2d1a00" stroke="#ffa657" stroke-width="1.5"/>
+        <text x="750" y="440" text-anchor="middle" fill="#ffa657" font-family="JetBrains Mono" font-size="11">¿Qué reporte?</text>
+      </g>
+
+      <!-- Verificar datos -->
+      <g class="node" id="n-check-data" data-group="decision" data-tip="<strong>¿Datos requeridos cargados?</strong>Cada función verifica que los vectores necesarios no estén vacíos antes de proceder. Si faltan datos, muestra error y retorna al menú.">
+        <polygon points="750,490 900,515 750,540 600,515" fill="#2d1a00" stroke="#ffa657" stroke-width="1.5"/>
+        <text x="750" y="520" text-anchor="middle" fill="#ffa657" font-family="JetBrains Mono" font-size="11">¿Datos cargados?</text>
+      </g>
+
+      <!-- Calcular estadisticas -->
+      <g class="node" id="n-calc" data-group="proceso" data-tip="<strong>Calcular estadísticas</strong>Itera sobre los vectores de datos para agrupar, sumar y calcular métricas: promedios, máximos, mínimos, medianas, desviaciones, porcentajes de reprobación.">
+        <rect x="650" y="570" width="200" height="50" rx="8" fill="#0f1a00" stroke="#3fb950" stroke-width="1.5"/>
+        <text x="750" y="601" text-anchor="middle" fill="#3fb950" font-family="JetBrains Mono" font-size="11">Calcular estadísticas</text>
+      </g>
+
+      <!-- Ordenar datos (solo top10 / reprobacion) -->
+      <g class="node" id="n-sort" data-group="proceso" data-tip="<strong>Ordenar datos (std::sort)</strong>Usado en Top-10 y Reprobación. std::sort con lambda comparadora descendente. Complejidad: O(n log n). Para Top-10 toma solo los primeros 10 resultados.">
+        <rect x="650" y="650" width="200" height="50" rx="8" fill="#0f1a00" stroke="#3fb950" stroke-width="1.5"/>
+        <text x="750" y="681" text-anchor="middle" fill="#3fb950" font-family="JetBrains Mono" font-size="11">Ordenar (std::sort)</text>
+      </g>
+
+      <!-- Generar HTML -->
+      <g class="node" id="n-genhtml" data-group="proceso" data-tip="<strong>Construir HTML dinámico</strong>ofstream escribe el HTML carácter a carácter usando string concatenation. Genera estilos CSS inline, tabla de datos y aplica clases de color según rangos.">
+        <rect x="650" y="730" width="200" height="50" rx="8" fill="#1a1a00" stroke="#d29922" stroke-width="1.5"/>
+        <text x="750" y="761" text-anchor="middle" fill="#d29922" font-family="JetBrains Mono" font-size="11">Generar HTML dinámico</text>
+      </g>
+
+      <!-- OUTPUT: archivo HTML -->
+      <g class="node" id="n-htmlout" data-group="reporte" data-tip="<strong>Archivo HTML generado</strong>Los 5 reportes posibles:<br>• reporte_estadisticas_curso.html<br>• reporte_rendimiento_estudiante.html<br>• reporte_top10.html<br>• reporte_reprobacion.html<br>• reporte_analisis_carrera.html">
+        <polygon points="650,820 850,820 870,870 630,870" fill="#1f1500" stroke="#ffa657" stroke-width="2"/>
+        <text x="750" y="851" text-anchor="middle" fill="#ffa657" font-family="JetBrains Mono" font-size="11">*.html generado ✅</text>
+      </g>
+
+      <!-- Confirmacion en consola -->
+      <g class="node" id="n-confirm" data-group="io" data-tip="<strong>Mensaje de confirmación</strong>El sistema imprime en consola: '✅ Reporte generado: nombre_archivo.html' o el conteo de registros cargados.">
+        <polygon points="640,900 860,900 840,950 660,950" fill="#1a1433" stroke="#bc8cff" stroke-width="1.5"/>
+        <text x="750" y="931" text-anchor="middle" fill="#bc8cff" font-family="JetBrains Mono" font-size="11">Confirmación en consola</text>
+      </g>
+
+      <!-- Continuar? -->
+      <g class="node" id="n-continue" data-group="decision" data-tip="<strong>¿Continuar?</strong>El sistema presiona Enter para continuar y vuelve a mostrarMenu(). El bucle while(!salir) mantiene el programa activo hasta que el usuario elige la opción 9.">
+        <polygon points="750,990 870,1015 750,1040 630,1015" fill="#2d1a00" stroke="#d29922" stroke-width="1.5"/>
+        <text x="750" y="1020" text-anchor="middle" fill="#d29922" font-family="JetBrains Mono" font-size="11">¿Continuar?</text>
+      </g>
+
+      <!-- END -->
+      <g class="node" id="n-end" data-group="inicio" data-tip="<strong>FIN</strong>El usuario eligió la opción 9. El programa imprime el mensaje de despedida y termina con return 0.">
+        <ellipse cx="550" cy="1985" rx="90" ry="28" fill="#3a1a1a" stroke="#f85149" stroke-width="2"/>
+        <text x="550" y="1991" text-anchor="middle" fill="#f85149" font-family="Syne" font-weight="700" font-size="14">FIN</text>
+      </g>
+
+      <!-- Labels on arrows -->
+      <text x="388" y="500" fill="#3fb950" font-size="10" font-family="JetBrains Mono">Si abre</text>
+      <text x="642" y="510" fill="#3fb950" font-size="10" font-family="JetBrains Mono">Sí</text>
+      <text x="652" y="448" fill="#ffa657" font-size="10" font-family="JetBrains Mono">op 4-8</text>
+    </svg>
+
+    <div class="zoom-controls">
+      <button class="zoom-btn" onclick="zoom(1.2)">+</button>
+      <button class="zoom-btn" onclick="zoom(0.8)">−</button>
+      <button class="zoom-btn" onclick="resetZoom()" title="Reset zoom">⌂</button>
+    </div>
+  </div>
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+  let scale = 1;
+  const svg = document.getElementById('diagram');
+  const tooltip = document.getElementById('tooltip');
+  let activeGroup = null;
+
+  function zoom(factor) {
+    scale *= factor;
+    scale = Math.min(Math.max(scale, 0.3), 3);
+    svg.style.transform = `scale(${scale})`;
+    svg.style.transformOrigin = 'top left';
+  }
+  function resetZoom() { scale = 1; svg.style.transform = ''; }
+
+  // Tooltip
+  document.querySelectorAll('.node').forEach(node => {
+    node.addEventListener('mouseenter', (e) => {
+      const tip = node.dataset.tip;
+      if (!tip) return;
+      tooltip.innerHTML = tip;
+      tooltip.classList.add('visible');
+    });
+    node.addEventListener('mousemove', (e) => {
+      tooltip.style.left = (e.clientX + 16) + 'px';
+      tooltip.style.top = (e.clientY - 10) + 'px';
+    });
+    node.addEventListener('mouseleave', () => {
+      tooltip.classList.remove('visible');
+    });
+  });
+
+  function showAll() {
+    activeGroup = null;
+    document.querySelectorAll('.node').forEach(n => { n.classList.remove('dimmed', 'highlighted'); });
+    document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('btn-all').classList.add('active');
+  }
+
+  const groupMap = {
+    'carga': ['n-carga-dec','n-file-open','n-readline','n-validate','n-push'],
+    'reportes': ['n-rep-dec','n-check-data','n-calc','n-sort','n-genhtml','n-htmlout','n-confirm','n-continue'],
+    'utils': ['n-split','n-convert','n-search','n-stats'],
+    'inicio': ['n-start','n-end'],
+    'proceso': ['n-menu-fn','n-readline','n-validate','n-calc','n-sort','n-genhtml'],
+    'decision': ['n-decision','n-carga-dec','n-file-open','n-rep-dec','n-check-data','n-continue'],
+    'io': ['n-compile','n-push','n-confirm'],
+    'reporte': ['n-htmlout']
+  };
+
+  function highlight(group) {
+    activeGroup = group;
+    const ids = groupMap[group] || [];
+    document.querySelectorAll('.node').forEach(n => {
+      if (ids.includes(n.id)) {
+        n.classList.remove('dimmed');
+        n.classList.add('highlighted');
+      } else {
+        n.classList.remove('highlighted');
+        n.classList.add('dimmed');
+      }
+    });
+    document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+    const btnId = 'btn-' + group;
+    if (document.getElementById(btnId)) document.getElementById(btnId).classList.add('active');
+  }
+
+  // Click on node to highlight its group
+  document.querySelectorAll('.node').forEach(node => {
+    node.addEventListener('click', () => {
+      const g = node.dataset.group;
+      if (g && activeGroup === g) { showAll(); }
+      else if (g) { highlight(g); }
+    });
+  });
+</script>
+</body>
+</html>
