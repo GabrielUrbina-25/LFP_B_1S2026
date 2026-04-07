@@ -1,0 +1,45 @@
+digraph Hospital {
+rankdir=TB;
+node [shape=box,style=filled,fontname="Arial"];
+
+H [label="Hospital General",fillcolor="#1A4731",fontcolor=white,shape=ellipse];
+P [label="PACIENTES",fillcolor="#2E7D52",fontcolor=white];
+M [label="MEDICOS",fillcolor="#2E7D52",fontcolor=white];
+C [label="CITAS",fillcolor="#2E7D52",fontcolor=white];
+D [label="DIAGNOSTICOS",fillcolor="#2E7D52",fontcolor=white];
+H -> P; H -> M; H -> C; H -> D;
+
+p0 [label="María García\nA+|Hab.302",fillcolor="#D4EDDA"];
+P -> p0;
+p1 [label="Carlos Mendoza\nO-|Hab.410",fillcolor="#D4EDDA"];
+P -> p1;
+p2 [label="Sofía Ramírez\nB+|Hab.215",fillcolor="#D4EDDA"];
+P -> p2;
+p3 [label="Pedro Castillo\nAB-|Hab.501",fillcolor="#D4EDDA"];
+P -> p3;
+m0 [label="Dr. Roberto Juárez\nMED-001|CARDIOLOGIA",fillcolor="#D6EAF8"];
+M -> m0;
+m1 [label="Dra. Ana Solís\nMED-002|NEUROLOGIA",fillcolor="#D6EAF8"];
+M -> m1;
+m2 [label="Dr. Luis Herrera\nMED-003|PEDIATRIA",fillcolor="#D6EAF8"];
+M -> m2;
+m3 [label="Dra. Carmen Vega\nMED-004|CIRUGIA",fillcolor="#D6EAF8"];
+M -> m3;
+p0 -> m0 [label="2025-04-10 09:00",color="#E67E22",style=dashed];
+p1 -> m1 [label="2025-04-10 11:30",color="#E67E22",style=dashed];
+p2 -> m2 [label="2025-04-11 08:00",color="#E67E22",style=dashed];
+p3 -> m0 [label="2025-04-10 09:00",color="#E67E22",style=dashed];
+p1 -> m3 [label="2025-04-12 14:30",color="#E67E22",style=dashed];
+d0 [label="Hipertensión Arterial\nLosartán 50mg / DIARIA",fillcolor="#FDEBD0"];
+D -> d0;
+d0 -> p0 [label="diagnostico",color="#C0392B"];
+d1 [label="Diabetes Tipo 1\nAcetaminofen 150mg / DIARIA",fillcolor="#FDEBD0"];
+D -> d1;
+d1 -> p0 [label="diagnostico",color="#C0392B"];
+d2 [label="Diabetes Tipo 2\nMetformina 850mg / CADA_12_HORAS",fillcolor="#FDEBD0"];
+D -> d2;
+d2 -> p1 [label="diagnostico",color="#C0392B"];
+d3 [label="Insuficiencia Cardiaca\nFurosemida 40mg / DIARIA",fillcolor="#FDEBD0"];
+D -> d3;
+d3 -> p3 [label="diagnostico",color="#C0392B"];
+}
