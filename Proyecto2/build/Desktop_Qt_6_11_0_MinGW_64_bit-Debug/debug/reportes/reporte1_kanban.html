@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<title>Tablero Kanban - "Proyecto Software 2026"</title>
+<style>
+body{font-family:'Segoe UI',Arial,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);padding:20px;margin:0;min-height:100vh}
+h1{color:white;text-align:center;text-shadow:2px 2px 4px rgba(0,0,0,0.3);font-size:2.5em;margin-bottom:30px}
+.error-banner{background:#e74c3c;color:white;padding:15px 25px;border-radius:8px;text-align:center;margin-bottom:25px;font-weight:bold;font-size:16px}
+.warning-banner{background:#f39c12;color:white;padding:15px 25px;border-radius:8px;text-align:center;margin-bottom:25px;font-weight:bold;font-size:16px}
+.board{display:flex;gap:25px;justify-content:center;flex-wrap:wrap;align-items:flex-start}
+.column{background:rgba(255,255,255,0.95);border-radius:12px;width:320px;padding:20px;box-shadow:0 8px 32px rgba(0,0,0,0.2);backdrop-filter:blur(10px)}
+.column h2{margin-top:0;color:#2c3e50;font-size:20px;border-bottom:3px solid #3498db;padding-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.badge-count{background:#3498db;color:white;padding:4px 12px;border-radius:20px;font-size:14px}
+.card{background:white;border-radius:10px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,0.08);border-left:5px solid #3498db;transition:transform 0.2s}
+.card:hover{transform:translateY(-3px);box-shadow:0 4px 16px rgba(0,0,0,0.15)}
+.card h3{margin:0 0 10px 0;font-size:17px;color:#2c3e50}
+.priority-badge{display:inline-block;padding:5px 10px;border-radius:6px;font-size:12px;font-weight:bold;color:white;margin-bottom:8px}
+.info{color:#5d6d7e;font-size:14px;margin:5px 0;display:flex;align-items:center;gap:8px}
+.icon{font-size:16px}
+.footer{text-align:center;color:rgba(255,255,255,0.8);margin-top:40px;font-size:14px}
+.empty-state{text-align:center;color:#7f8c8d;padding:40px;font-style:italic}
+</style></head><body>
+<h1>📋 "Proyecto Software 2026"</h1><div class="error-banner">⚠️ Este reporte fue generado con errores en el análisis. Algunos datos pueden estar incompletos.</div><div class="board"><div class="column"><h2>"Por Hacer"<span class="badge-count">3 tareas</span></h2><div class="card" style="border-left-color:#2ecc71"><span class="priority-badge" style="background:#2ecc71">BAJA</span><h3>"Revisar documentación"</h3><div class="info"><span class="icon">👤</span>"Pedro"</div><div class="info"><span class="icon">📅</span>2026-05-20</div></div><div class="card" style="border-left-color:#e74c3c"><span class="priority-badge" style="background:#e74c3c">ALTA</span><h3>"Estudiar competencia"</h3><div class="info"><span class="icon">👤</span>"Jorge"</div><div class="info"><span class="icon">📅</span></div></div><div class="card" style="border-left-color:#f1c40f"><span class="priority-badge" style="background:#f1c40f">MEDIA</span><h3>"Validar flujos"</h3><div class="info"><span class="icon">👤</span></div><div class="info"><span class="icon">📅</span></div></div></div><div class="column"><h2>"En Análisis"<span class="badge-count">0 tareas</span></h2><div class="empty-state">Sin tareas en esta columna</div></div></div><div class="footer">Generado por TaskScript Analyzer - LFP Proyecto 2</div></body></html>

@@ -1,0 +1,5 @@
+TABLERO "Proyecto" {
+    COLUMNA "Test" {
+        tarea: "Tarea 1" [prioridad: ALTA, responsable: "Jorge", estado: "activo"],
+    };
+};

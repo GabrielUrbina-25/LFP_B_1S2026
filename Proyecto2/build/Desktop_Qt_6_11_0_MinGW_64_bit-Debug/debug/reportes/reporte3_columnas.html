@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<title>Resumen por Columna - "Proyecto Software 2026"</title>
+<style>
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f2f5;padding:20px}
+h1{color:#2c3e50;text-align:center;margin-bottom:10px}
+.subtitle{text-align:center;color:#7f8c8d;margin-bottom:40px}
+.error-banner{background:#e74c3c;color:white;padding:15px;border-radius:8px;text-align:center;margin-bottom:25px;font-weight:bold;max-width:800px;margin-left:auto;margin-right:auto}
+.warning-banner{background:#27ae60;color:white;padding:15px;border-radius:8px;text-align:center;margin-bottom:25px;font-weight:bold;max-width:800px;margin-left:auto;margin-right:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(350px,1fr));gap:25px;max-width:1200px;margin:0 auto}
+.card{background:white;border-radius:16px;padding:25px;box-shadow:0 4px 20px rgba(0,0,0,0.08);position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;width:100%;height:5px;background:linear-gradient(90deg,#667eea 0%,#764ba2 100%)}
+.card h2{margin-top:0;color:#2c3e50;font-size:22px;display:flex;justify-content:space-between;align-items:center}
+.task-count{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;padding:8px 16px;border-radius:25px;font-size:16px;font-weight:bold}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:15px;margin-top:20px}
+.stat-box{text-align:center;padding:15px;border-radius:10px;background:#f8f9fa}
+.stat-box.alta{background:#fdf2f2}
+.stat-box.media{background:#fef9e7}
+.stat-box.baja{background:#eafaf1}
+.stat-number{font-size:28px;font-weight:bold;margin-bottom:5px}
+.stat-box.alta .stat-number{color:#e74c3c}
+.stat-box.media .stat-number{color:#f39c12}
+.stat-box.baja .stat-number{color:#27ae60}
+.stat-label{font-size:12px;color:#7f8c8d;text-transform:uppercase;letter-spacing:1px}
+.progress-section{margin-top:20px}
+.progress-label{display:flex;justify-content:space-between;margin-bottom:8px;font-size:14px;color:#5d6d7e}
+.progress-bar{width:100%;height:20px;background:#ecf0f1;border-radius:10px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#667eea 0%,#764ba2 100%);border-radius:10px;transition:width 0.5s ease}
+.empty-state{text-align:center;color:#7f8c8d;padding:60px;font-size:16px;grid-column:1/-1}
+.summary-box{max-width:800px;margin:40px auto;background:white;padding:30px;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.08);text-align:center}
+.summary-box h2{color:#2c3e50;margin-top:0}
+.big-number{font-size:48px;font-weight:bold;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+</style></head><body>
+<h1>📊 Resumen por Columna</h1>
+<p class="subtitle">"Proyecto Software 2026"</p><div class="error-banner">⚠️ Este reporte fue generado con errores en el análisis. Algunos datos pueden estar incompletos.</div><div class="grid"><div class="card">
+<h2>"Por Hacer"<span class="task-count">3 tareas</span></h2>
+<div class="stats-grid">
+    <div class="stat-box alta">
+        <div class="stat-number">1</div>
+        <div class="stat-label">Alta</div>
+    </div>
+    <div class="stat-box media">
+        <div class="stat-number">1</div>
+        <div class="stat-label">Media</div>
+    </div>
+    <div class="stat-box baja">
+        <div class="stat-number">1</div>
+        <div class="stat-label">Baja</div>
+    </div>
+</div>
+<div class="progress-section">
+    <div class="progress-label"><span>Porcentaje del tablero</span><span>100.0%</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:100.0%"></div></div>
+</div>
+</div><div class="card">
+<h2>"En Análisis"<span class="task-count">0 tareas</span></h2>
+<div class="stats-grid">
+    <div class="stat-box alta">
+        <div class="stat-number">0</div>
+        <div class="stat-label">Alta</div>
+    </div>
+    <div class="stat-box media">
+        <div class="stat-number">0</div>
+        <div class="stat-label">Media</div>
+    </div>
+    <div class="stat-box baja">
+        <div class="stat-number">0</div>
+        <div class="stat-label">Baja</div>
+    </div>
+</div>
+<div class="progress-section">
+    <div class="progress-label"><span>Porcentaje del tablero</span><span>0.0%</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:0.0%"></div></div>
+</div>
+</div></div>
+<div class="summary-box">
+    <h2>📈 Totales del Proyecto</h2>
+    <div class="big-number">3</div>
+    <p style="color:#7f8c8d;font-size:16px">tareas en 2 columnas</p>
+</div>
+</body></html>
