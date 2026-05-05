@@ -1,29 +1,25 @@
-QT += widgets
+QT       += core gui widgets
 
 CONFIG += c++17
 
-# You can make your code fail to compile if it uses deprecated APIs.
-# In order to do so, uncomment the following line.
-#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
+TARGET = TaskScriptAnalyzer
+TEMPLATE = app
 
 SOURCES += \
-    errormanager.cpp \
-    kanbandata.cpp \
-    lexicalanalyzer.cpp \
     main.cpp \
     mainwindow.cpp \
+    token.cpp \
+    lexicalanalyzer.cpp \
     syntaxanalyzer.cpp \
-    token.cpp
+    errormanager.cpp \
+    reportgenerator.cpp \
+    kanbandata.cpp
 
 HEADERS += \
-    errormanager.h \
-    kanbandata.h \
-    lexicalanalyzer.h \
     mainwindow.h \
+    token.h \
+    lexicalanalyzer.h \
     syntaxanalyzer.h \
-    token.h
-
-# Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
-!isEmpty(target.path): INSTALLS += target
+    errormanager.h \
+    reportgenerator.h \
+    kanbandata.h

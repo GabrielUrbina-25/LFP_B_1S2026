@@ -171,7 +171,6 @@ std::shared_ptr<ASTNode> SyntaxAnalyzer::columna() {
     // Extraer tareas del nodo para el modelo de datos
     for (auto& child : tars->children) {
         // Cada child de tareas es <tarea>, que contiene los datos
-        // Simplificación: reconstruiremos desde tokens
     }
     tablero.columnas.push_back(colData);
 
@@ -251,8 +250,7 @@ std::shared_ptr<ASTNode> SyntaxAnalyzer::tarea() {
         node->addChild(std::make_shared<ASTNode>("]", true, "]"));
     }
 
-    // Guardar tarea en la columna actual (necesitamos referencia)
-    // Nota: En implementación real, pasar referencia de columna actual
+    // Guardar tarea en la columna actual
     if (!tablero.columnas.empty()) {
         tablero.columnas.back().tareas.push_back(tareaData);
     }
